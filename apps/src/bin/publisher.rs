@@ -19,14 +19,81 @@
 use alloy_primitives::U256;
 use alloy_sol_types::{sol, SolInterface, SolValue};
 use anyhow::{Context, Result};
-use apps::{BonsaiProver, TxSender};
 use clap::Parser;
-use methods::IS_EVEN_ELF;
+use serde::{Deserialize, Serialize};
+
+use apps::{BonsaiProver, TxSender};
+use methods::PREDICATE_VERIFIER_ELF;
+
+#[derive(Serialize, Deserialize, Debug)]
+struct PublicKeyHolder {
+    public_key: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+struct Proof {
+    #[serde(rename = "type")]
+    proof_type: String,
+    jwt: String,
+}
+
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Credential {
+    #[serde(rename = "credentialSubject")]
+    credential_subject: serde_json::Value,
+    issuer: serde_json::Value,
+    #[serde(rename = "type")]
+    types: Vec<String>,
+    #[serde(rename = "@context")]
+    context: Vec<String>,
+    #[serde(rename = "issuanceDate")]
+    issuance_date: String,
+    proof: Proof,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Root {
+    #[serde(rename = "bidSize")]
+    bid_size: u32,
+    #[serde(rename = "eidIssuer")]
+    eid_issuer: PublicKeyHolder,
+    bank: PublicKeyHolder,
+    person: PublicKeyHolder,
+    #[serde(rename = "personCredential")]
+    person_credential: Credential,
+    #[serde(rename = "houseLoanCredential")]
+    house_loan_credential: Credential,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+enum Condition {
+    LT,
+    GT,
+    EQ,
+    NEQ,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+enum FieldValue {
+    Int(u32),
+    Text(String),
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+struct Predicate {
+    field: String,
+    condition: Condition,
+    value: FieldValue,
+    return_value: String,
+}
+
+
 
 // `IEvenNumber` interface automatically generated via the alloy `sol!` macro.
 sol! {
-    interface IEvenNumber {
-        function set(uint256 x, bytes32 post_state_digest, bytes calldata seal);
+    interface IVerifierContract {
+       function set(string[] result_list, bytes32 post_state_digest, bytes calldata seal);
     }
 }
 
@@ -68,23 +135,25 @@ fn main() -> Result<()> {
     )?;
 
     // ABI encode the input for the guest binary, to match what the `is_even` guest
-    // code expects.
     let input = args.input.abi_encode();
 
     // Send an off-chain proof request to the Bonsai proving service.
-    let (journal, post_state_digest, seal) = BonsaiProver::prove(IS_EVEN_ELF, &input)?;
+    let (journal, post_state_digest, seal) = BonsaiProver::prove(PREDICATE_VERIFIER_ELF, &input)?;
+
+    let result_list = journal.into_iter()
+        .map(|b| (b as char).to_string())
+        .collect();
 
     // Decode the journal. Must match what was written in the guest with
     // `env::commit_slice`.
-    let x = U256::abi_decode(&journal, true).context("decoding journal data")?;
 
     // Encode the function call for `IEvenNumber.set(x)`.
-    let calldata = IEvenNumber::IEvenNumberCalls::set(IEvenNumber::setCall {
-        x,
+    let calldata = IVerifierContract::IVerifierContractCalls::set(IVerifierContract::setCall {
+        result_list: result_list,
         post_state_digest,
         seal,
     })
-    .abi_encode();
+        .abi_encode();
 
     // Send the calldata to Ethereum.
     let runtime = tokio::runtime::Runtime::new()?;

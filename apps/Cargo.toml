@@ -8,6 +8,7 @@ alloy-primitives = { workspace = true }
 alloy-sol-types = { workspace = true }
 anyhow = { workspace = true }
 bincode = { workspace = true }
+ethabi = "18.0.0"
 bonsai-sdk = { workspace = true }
 bytemuck = { workspace = true }
 clap = { version = "4.0", features = ["derive", "env"] }
@@ -20,3 +21,4 @@ risc0-ethereum-contracts = { workspace = true }
 risc0-zkvm = { workspace = true }
 serde = { workspace = true }
 tokio = { version = "1.35", features = ["full"] }
+serde_json = "1.0.114"

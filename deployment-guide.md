@@ -51,7 +51,7 @@ You can deploy your contracts and run an end-to-end test or demo as follows:
     ...
     == Logs ==
     Deployed RiscZeroGroth16Verifier to 0x5FbDB2315678afecb367f032d93F642f64180aa3
-    Deployed EvenNumber to 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+    Deployed VerifierContract.sol to 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
     ...
     ```
 
@@ -64,7 +64,7 @@ You can deploy your contracts and run an end-to-end test or demo as follows:
     > You can also use the following command to set the contract address if you have [`jq`][jq] installed:
     >
     > ```bash
-    > export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "EvenNumber") | .contractAddress' ./broadcast/Deploy.s.sol/31337/run-latest.json)
+    > export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "VerifierContract.sol") | .contractAddress' ./broadcast/Deploy.s.sol/31337/run-latest.json)
     > ```
 
 ### Interact with your local deployment
@@ -123,7 +123,7 @@ You can deploy your contracts on a testnet such as `Sepolia` and run an end-to-e
     ...
     == Logs ==
     Deployed RiscZeroGroth16Verifier to 0x5FbDB2315678afecb367f032d93F642f64180aa3
-    Deployed EvenNumber to 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+    Deployed VerifierContract.sol to 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
     ...
     ```
 
@@ -136,7 +136,7 @@ You can deploy your contracts on a testnet such as `Sepolia` and run an end-to-e
     > You can also use the following command to set the contract address if you have [`jq`][jq] installed:
     >
     > ```bash
-    > export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "EvenNumber") | .contractAddress' ./broadcast/Deploy.s.sol/11155111/run-latest.json)
+    > export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "VerifierContract.sol") | .contractAddress' ./broadcast/Deploy.s.sol/11155111/run-latest.json)
     > ```
 
 ### Interact with your testnet deployment

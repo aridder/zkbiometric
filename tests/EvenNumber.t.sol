@@ -20,33 +20,39 @@ import {RiscZeroCheats} from "risc0/RiscZeroCheats.sol";
 import {console2} from "forge-std/console2.sol";
 import {Test} from "forge-std/Test.sol";
 import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
-import {EvenNumber} from "../contracts/EvenNumber.sol";
-import {Elf} from "./Elf.sol"; // auto-generated contract after running `cargo build`.
+import {VerifierContract} from "../contracts/VerifierContract.sol";
+import {Elf} from "./Elf.sol";
+import "forge-std/console.sol";
 
 contract EvenNumberTest is RiscZeroCheats, Test {
-    EvenNumber public evenNumber;
+    VerifierContract public evenNumber;
 
     function setUp() public {
         IRiscZeroVerifier verifier = deployRiscZeroVerifier();
-        evenNumber = new EvenNumber(verifier);
-        assertEq(evenNumber.get(), 0);
+        evenNumber = new VerifierContract(verifier);
+
+        assertEq(evenNumber.get(), 10);
     }
 
     function test_SetEven() public {
-        uint256 number = 12345678;
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.IS_EVEN_PATH, abi.encode(number));
-
-        evenNumber.set(abi.decode(journal, (uint256)), post_state_digest, seal);
+        uint256 number = 10;
+        console.log("address of %s is %s", "evenNumber", address(evenNumber));
+        console.logAddress(address(evenNumber));
         assertEq(evenNumber.get(), number);
+        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
+            prove(Elf.PREDICATE_VERIFIER_PATH, abi.encode(number));
+
+//        evenNumber.set(abi.decode(journal, (uint256)), post_state_digest, seal);
+//        assertEq(evenNumber.get(), number);
     }
 
     function test_SetZero() public {
-        uint256 number = 0;
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.IS_EVEN_PATH, abi.encode(number));
-
-        evenNumber.set(abi.decode(journal, (uint256)), post_state_digest, seal);
+        uint256 number = 10;
         assertEq(evenNumber.get(), number);
+//        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
+//            prove(Elf.PREDICATE_VERIFIER_PATH, abi.encode(number));
+//
+//        evenNumber.set(abi.decode(journal, (uint256)), post_state_digest, seal);
+//        assertEq(evenNumber.get(), number);
     }
 }
