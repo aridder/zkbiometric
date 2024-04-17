@@ -30,7 +30,6 @@ struct Proof {
     jwt: String,
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 struct Credential {
     #[serde(rename = "credentialSubject")]
@@ -81,16 +80,12 @@ struct Predicate {
     return_value: String,
 }
 
-
-
 #[cfg(test)]
 mod tests {
-    use std::fs;
-    use risc0_zkvm::{default_executor, ExecutorEnv};
-    use crate::{FieldValue, Predicate, Root};
     use crate::Condition::GT;
-    use crate::FieldValue::Int;
-    use std::env;
+    use crate::{FieldValue, Predicate, Root};
+    use risc0_zkvm::{default_executor, ExecutorEnv};
+    use std::fs;
 
     #[test]
     fn proves_older_than() {
@@ -100,11 +95,11 @@ mod tests {
 
         let person_credential = root.person_credential;
 
-        let predicate = Predicate{
+        let predicate = Predicate {
             field: String::from("date_of_birth"),
             condition: GT,
             value: FieldValue::Int(19791001),
-            return_value: String::from("Subject is older than 40 years old")
+            return_value: String::from("Subject is older than 40 years old"),
         };
 
         let predicate_list = vec![predicate];
@@ -120,8 +115,10 @@ mod tests {
             .unwrap();
 
         // NOTE: Use the executor to run tests without proving.
-        let session_info = default_executor().execute(env, super::PREDICATE_VERIFIER_ELF).unwrap();
-        let (result_list): (Vec<String>) = session_info.journal.decode().unwrap();
+        let session_info = default_executor()
+            .execute(env, super::PREDICATE_VERIFIER_ELF)
+            .unwrap();
+        let result_list: Vec<String> = session_info.journal.decode().unwrap();
 
         // println!("Issuer: {}", issuer_address);
         println!("Result list: {:?}", result_list);
@@ -137,11 +134,11 @@ mod tests {
 
         let person_credential = root.person_credential;
 
-        let predicate = Predicate{
+        let predicate = Predicate {
             field: String::from("nationality"),
             condition: EQ,
             value: FieldValue::Text(String::from("NO")),
-            return_value: String::from("NO")
+            return_value: String::from("NO"),
         };
 
         let predicate_list = vec![predicate];
@@ -150,8 +147,6 @@ mod tests {
 
         let input = (person_credential.proof.jwt, public_key_eid, predicate_list);
 
-
-
         let env = ExecutorEnv::builder()
             .write(&input)
             .unwrap()
@@ -159,8 +154,10 @@ mod tests {
             .unwrap();
 
         // NOTE: Use the executor to run tests without proving.
-        let session_info = default_executor().execute(env, super::PREDICATE_VERIFIER_ELF).unwrap();
-        let (result_list): (Vec<String>) = session_info.journal.decode().unwrap();
+        let session_info = default_executor()
+            .execute(env, super::PREDICATE_VERIFIER_ELF)
+            .unwrap();
+        let result_list: Vec<String> = session_info.journal.decode().unwrap();
 
         // println!("Issuer address: {}", issuer_address);
         println!("Result list: {:?}", result_list);

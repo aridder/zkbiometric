@@ -18,7 +18,7 @@
 
 use alloy_primitives::U256;
 use alloy_sol_types::{sol, SolInterface, SolValue};
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::Parser;
 use serde::{Deserialize, Serialize};
 
@@ -36,7 +36,6 @@ struct Proof {
     proof_type: String,
     jwt: String,
 }
-
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Credential {
@@ -88,8 +87,6 @@ struct Predicate {
     return_value: String,
 }
 
-
-
 // `IEvenNumber` interface automatically generated via the alloy `sol!` macro.
 sol! {
     interface IVerifierContract {
@@ -140,7 +137,8 @@ fn main() -> Result<()> {
     // Send an off-chain proof request to the Bonsai proving service.
     let (journal, post_state_digest, seal) = BonsaiProver::prove(PREDICATE_VERIFIER_ELF, &input)?;
 
-    let result_list = journal.into_iter()
+    let result_list = journal
+        .into_iter()
         .map(|b| (b as char).to_string())
         .collect();
 
@@ -153,7 +151,7 @@ fn main() -> Result<()> {
         post_state_digest,
         seal,
     })
-        .abi_encode();
+    .abi_encode();
 
     // Send the calldata to Ethereum.
     let runtime = tokio::runtime::Runtime::new()?;
