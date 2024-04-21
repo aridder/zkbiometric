@@ -5,8 +5,6 @@ use jwt_compact::{alg::*, prelude::*, Token, UntrustedToken};
 // If you want to try std support, also update the guests Cargo.toml file
 use risc0_zkvm::guest::env;
 use serde::{Deserialize, Serialize};
-use alloy_primitives::Address;
-
 
 risc0_zkvm::guest::entry!(main);
 

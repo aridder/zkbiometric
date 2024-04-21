@@ -94,7 +94,7 @@ struct Predicate {
 mod tests {
     use std::fs;
 
-    use risc0_zkvm::{default_executor, default_prover, ExecutorEnv};
+    use risc0_zkvm::{default_executor, ExecutorEnv};
 
     use crate::{BiometricRoot, FieldValue, Predicate, Root};
     use crate::Condition::GT;
@@ -158,6 +158,10 @@ mod tests {
         let session_info = default_executor()
             .execute(env, super::BIOMETRIC_VERIFIER_ELF)
             .unwrap();
+
+        let result: String = session_info.journal.decode().unwrap();
+
+        println!("Result: {}", result);
     }
 
     #[test]
@@ -193,7 +197,10 @@ mod tests {
         let session_info = default_executor()
             .execute(env, super::PREDICATE_VERIFIER_ELF)
             .unwrap();
+
         let issuer: String = session_info.journal.decode().unwrap();
+
+        println!("Issuer: {}", issuer);
 
         // println!("Issuer address: {}", issuer_address);
     }
