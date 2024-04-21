@@ -24,4 +24,4 @@ serde_json = "1.0"
 
 
 [package.metadata.risc0]
-methods = ["guests/predicate_verifier"]
+methods = ["guests/predicate_verifier", "guests/biometric_verifier"]

@@ -3,10 +3,6 @@ name = "guests"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "is-even"
-path = "src/bin/is_even.rs"
-
 [workspace]
 
 [dependencies]

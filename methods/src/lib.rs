@@ -14,9 +14,9 @@
 
 //! Generated crate containing the image ID and ELF binary of the build guest.
 
-include!(concat!(env!("OUT_DIR"), "/methods.rs"));
-
 use serde::{Deserialize, Serialize};
+
+include!(concat!(env!("OUT_DIR"), "/methods.rs"));
 
 #[derive(Serialize, Deserialize, Debug)]
 struct PublicKeyHolder {
@@ -58,6 +58,16 @@ struct Root {
     house_loan_credential: Credential,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct BiometricRoot {
+    #[serde(rename = "biometricIssuer")]
+    biometric_issuer: PublicKeyHolder,
+    #[serde(rename = "biometricOnboardingCredential")]
+    biometric_onboarding_credential: Credential,
+    #[serde(rename = "biometricChallengeCredential")]
+    biometric_challenge_credential: Credential,
+}
+
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 enum Condition {
     LT,
@@ -82,10 +92,12 @@ struct Predicate {
 
 #[cfg(test)]
 mod tests {
-    use crate::Condition::GT;
-    use crate::{FieldValue, Predicate, Root};
-    use risc0_zkvm::{default_executor, ExecutorEnv};
     use std::fs;
+
+    use risc0_zkvm::{default_executor, default_prover, ExecutorEnv};
+
+    use crate::{BiometricRoot, FieldValue, Predicate, Root};
+    use crate::Condition::GT;
 
     #[test]
     fn proves_older_than() {
@@ -125,6 +137,30 @@ mod tests {
     }
 
     #[test]
+    fn prove_biometry() {
+        let biometric_mock = fs::read_to_string("./biometric_mock.json").expect("Unable to read file");
+        let biometric_mock_root: BiometricRoot = serde_json::from_str(&biometric_mock).expect("JSON was not well-formatted");
+
+        let onboarding_biometric_credential = biometric_mock_root.biometric_onboarding_credential;
+        let challenge_biometric_credential = biometric_mock_root.biometric_challenge_credential;
+
+        let biometric_issuer = biometric_mock_root.biometric_issuer;
+
+        let input = (onboarding_biometric_credential.proof.jwt, challenge_biometric_credential.proof.jwt, biometric_issuer.public_key);
+
+        let env = ExecutorEnv::builder()
+            .write(&input)
+            .unwrap()
+            .build()
+            .unwrap();
+
+
+        let session_info = default_executor()
+            .execute(env, super::BIOMETRIC_VERIFIER_ELF)
+            .unwrap();
+    }
+
+    #[test]
     fn proves_nationality() {
         use crate::Condition::EQ;
 
@@ -157,25 +193,9 @@ mod tests {
         let session_info = default_executor()
             .execute(env, super::PREDICATE_VERIFIER_ELF)
             .unwrap();
-        let result_list: Vec<String> = session_info.journal.decode().unwrap();
+        let issuer: String = session_info.journal.decode().unwrap();
 
         // println!("Issuer address: {}", issuer_address);
-        println!("Result list: {:?}", result_list);
     }
 
-    // #[test]
-    //
-    // #[test]
-    // #[should_panic(expected = "number is not even")]
-    // fn rejects_odd_number() {
-    //     // let odd_number = U256::from(75);
-    //     //
-    //     // let env = ExecutorEnv::builder()
-    //     //     .write_slice(&odd_number.abi_encode())
-    //     //     .build()
-    //     //     .unwrap();
-    //     //
-    //     // // NOTE: Use the executor to run tests without proving.
-    //     // default_executor().execute(env, super::IS_EVEN_ELF).unwrap();
-    // }
 }

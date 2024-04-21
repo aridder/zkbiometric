@@ -1,0 +1,47 @@
+{
+  "biometricIssuer": {
+    "public_key": "6597f4e63517f4f9b8e5c98a0823b7b6b2c0341383da5836771a11b51948ff98"
+  },
+  "biometricOnboardingCredential": {
+    "credentialSubject": {
+      "fingerprint": "poasdlbkh12+39102asdasdlkj",
+      "id": "did:key:z6MkiMYTi9pqYrYbLGN6Drjyj3DsdhVTubJ9uygTNQfjmcpb"
+    },
+    "issuer": {
+      "id": "did:key:z6MkmHqcaLPPtRDQn5CcY8j1gijhWNfW67F89ZTqtfBsvivj"
+    },
+    "type": [
+      "VerifiableCredential",
+      "BiometricOnboardingCredential"
+    ],
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1"
+    ],
+    "issuanceDate": "2024-04-21T14:32:08.000Z",
+    "proof": {
+      "type": "JwtProof2020",
+      "jwt": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSJdLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIiwiQmlvbWV0cmljT25ib2FyZGluZ0NyZWRlbnRpYWwiXSwiY3JlZGVudGlhbFN1YmplY3QiOnsiZmluZ2VycHJpbnQiOiJwb2FzZGxia2gxMiszOTEwMmFzZGFzZGxraiJ9fSwic3ViIjoiZGlkOmtleTp6Nk1raU1ZVGk5cHFZclliTEdONkRyanlqM0RzZGhWVHViSjl1eWdUTlFmam1jcGIiLCJuYmYiOjE3MTM3MDk5MjgsImlzcyI6ImRpZDprZXk6ejZNa21IcWNhTFBQdFJEUW41Q2NZOGoxZ2lqaFdOZlc2N0Y4OVpUcXRmQnN2aXZqIn0.jCbEWFsSCo7lSXP16TSYevGvb6drwXqzTJL5egvPaqQckjtIw6apCbGHv_vSMDSil5YI66Q0A1CMOyeVNDHoAA"
+    }
+  },
+  "biometricChallengeCredential": {
+    "credentialSubject": {
+      "fingerprint": "poasdlbkh12+39102asdasdlkj",
+      "id": "did:key:z6MkiMYTi9pqYrYbLGN6Drjyj3DsdhVTubJ9uygTNQfjmcpb"
+    },
+    "issuer": {
+      "id": "did:key:z6MkmHqcaLPPtRDQn5CcY8j1gijhWNfW67F89ZTqtfBsvivj"
+    },
+    "type": [
+      "VerifiableCredential",
+      "BiometricChallengeCredential"
+    ],
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1"
+    ],
+    "issuanceDate": "2024-04-21T14:32:08.000Z",
+    "proof": {
+      "type": "JwtProof2020",
+      "jwt": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSJdLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIiwiQmlvbWV0cmljQ2hhbGxlbmdlQ3JlZGVudGlhbCJdLCJjcmVkZW50aWFsU3ViamVjdCI6eyJmaW5nZXJwcmludCI6InBvYXNkbGJraDEyKzM5MTAyYXNkYXNkbGtqIn19LCJzdWIiOiJkaWQ6a2V5Ono2TWtpTVlUaTlwcVlyWWJMR042RHJqeWozRHNkaFZUdWJKOXV5Z1ROUWZqbWNwYiIsIm5iZiI6MTcxMzcwOTkyOCwiaXNzIjoiZGlkOmtleTp6Nk1rbUhxY2FMUFB0UkRRbjVDY1k4ajFnaWpoV05mVzY3Rjg5WlRxdGZCc3ZpdmoifQ.X6v9RqghqiW9tbyFHD1OlDuwvX1Zchy51s8IzhAnPGN-B6U_B_bOyyMgL7UFFx9nQtWN_6pTjgiLAcj-khx6DQ"
+    }
+  }
+}
