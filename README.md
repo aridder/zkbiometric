@@ -1,188 +1,43 @@
-# RISC Zero Foundry Template
+# zkBiometric
 
-> **Note: This software is not production ready. Do not use in production.**
-
-> Note: This template was recently updated to work without the relay.
-> If you'd like the relay version, head over to the [relay branch](https://github.com/risc0/bonsai-foundry-template/tree/relay)
-
-Starter template for writing an application using [RISC Zero] and Ethereum.
-
-This repository implements an application on Ethereum utilizing RISC Zero as a [coprocessor] to the smart contract application.
-It provides a starting point for building powerful new applications on Ethereum that offload computationally intensive (i.e. gas expensive), or would be difficult to implement Solidity (e.g. ed25519 signature verification, or HTML parsing).
-
-Prove computation with the [RISC Zero zkVM] and verify the results in your Ethereum contract.
+Securely verify onboarded biometric data using a real-time challenge with a zkVM. Use zero-knowledge proofs to ensure robust identity confirmation while maintaining user privacy.
 
 ## Overview
 
-Here is a simplified overview of how devs can integrate RISC Zero, with [Bonsai] proving, into their Ethereum smart contracts:
+As part of the European Union’s initiative to issue digital credentials to all citizens by 2027, zkBiometric provides a secure and privacy-preserving solution for biometric identity verification. Designed for high assurance and adherence to strict privacy standards, our system enables service providers to verify identities without accessing sensitive biometric data.
 
-![RISC Zero Foundry Template Diagram](images/risc0-foundry-template.png)
+### How It Works
 
-1. Run your application logic in the [RISC Zero zkVM]. The provided [publisher] app sends an off-chain proof request to the [Bonsai] proving service.
-2. [Bonsai] generates the program result, written to the [journal], and a SNARK proof of its correctness.
-3. The [publisher] app submits this proof and journal on-chain to your app contract for validation.
-4. Your app contract calls the [RISC Zero Verifier] to validate the proof. If the verification is successful, the journal is deemed trustworthy and can be safely used.
+- **Biometric Data Capture and Credential Issuance**: Utilizing [Mobai's technology](https://www.mobai.bio/), we capture a digital representation of a user's facial biometrics. These are then encapsulated in a BiometricOnboardingCredential and issued to the user’s digital wallet.
+  
+- **Biometric Verification for Service Access**: Service providers request users to verify their identity by reproducing their biometric "fingerprint," which is used to generate a BiometricChallengeCredential.
+  
+- **Zero-Knowledge Proof of Identity Verification**: Our system utilizes RISC Zero's zkVM to verify the identity by confirming that the BiometricChallengeCredential matches the BiometricOnboardingCredential through a zero-knowledge proof.
 
-## Dependencies
+- **Secure Data Transmission**: Verified identities enable secure transmission of relevant user data like account numbers or and Ethereum address to service providers.
 
-First, [install Rust] and [Foundry], and then restart your terminal.
+### System Benefits
 
-```sh
-# Install Rust
-curl https://sh.rustup.rs -sSf | sh
-# Install Foundry
-curl -L https://foundry.paradigm.xyz | bash
-```
+- **Enhanced Security and Privacy**: Leveraging zero-knowledge proofs to keep biometric data private and secure.
+  
+- **High Assurance Identity Verification**: Robust biometric mechanisms provide high confidence in identity verification, crucial for sensitive transactions.
+  
+- **Scalability and EU Compliance**: Designed to scale across the EU, supporting the digital credential rollout and EU regulatory frameworks.
 
-Next, you will need to install the `cargo risczero` tool.
-We'll use [`cargo binstall`][cargo-binstall] to get `cargo-risczero` installed, and then install the `risc0` toolchain.
-See [RISC Zero installation] for more details.
+- **Potential**: Can be expanded to financial services for KYC processes, secure voting systems, and any digital platform requiring reliable user authentication.
 
-```sh
-cargo install cargo-binstall
-cargo binstall cargo-risczero
-cargo risczero install
-```
 
-Now you have all the tools you need to develop and deploy an application with [RISC Zero].
+## Technology Stack
 
-## Quick Start
+- **Verifiable Credentials (eIDAS 2.0)**: [EU Digital Identity Wallet](https://github.com/eu-digital-identity-wallet)
+  
+- **RISC Zero zkVM**: [Learn More](https://www.risczero.com/)
+  
+- **Foundry Template from RISC Zero zkVM**
 
-First, install the RISC Zero toolchain using the [instructions above](#dependencies).
+## How It's Made
 
-Now, you can initialize a new RISC Zero project at a location of your choosing:
-
-```sh
-forge init -t risc0/bonsai-foundry-template ./my-project
-```
-
-Congratulations! You've just started your first RISC Zero project.
-
-Your new project consists of:
-
-- a [zkVM program] (written in Rust), which specifies a computation that will be proven;
-- a [app contract] (written in Solidity), which uses the proven results;
-- a [publisher] which makes proving requests to [Bonsai] and posts the proof to Ethereum.
-  We provide an example implementation, but your dApp interface or application servers could act as the publisher.
-
-### Build the Code
-
-- Builds for zkVM program, the publisher app, and any other Rust code.
-
-  ```sh
-  cargo build
-  ```
-
-- Build your Solidity smart contracts
-
-  > NOTE: `cargo build` needs to run first to generate the `ImageID.sol` contract.
-
-  ```sh
-  forge build
-  ```
-
-### Run the Tests
-
-- Tests your zkVM program.
-
-  ```sh
-  cargo test
-  ```
-
-- Test your Solidity contracts, integrated with your zkVM program.
-
-  ```sh
-  RISC0_DEV_MODE=true forge test -vvv 
-  ```
-
-## Develop Your Application
-
-To build your application, you'll need to make changes in three folders:
-
-- write the code you want proven in the [methods/guest](./methods/guest/) folder.
-- write the on-chain part of your project in the [contracts](./contracts/) folder.
-- adjust the publisher example in the [apps](./apps/) folder.
-
-### Configuring Bonsai
-
-***Note:*** *To request an API key [complete the form here](https://bonsai.xyz/apply).*
-
-With the Bonsai proving service, you can produce a [Groth16 SNARK proof] that is verifiable on-chain.
-You can get started by setting the following environment variables with your API key and associated URL.
-
-```bash
-export BONSAI_API_KEY="YOUR_API_KEY" # see form linked above
-export BONSAI_API_URL="BONSAI_URL" # provided with your api key
-```
-
-Now if you run `forge test` with `RISC0_DEV_MODE=false`, the test will run as before, but will additionally use the fully verifying `RiscZeroGroth16Verifier` contract instead of `MockRiscZeroVerifier` and will request a SNARK receipt from Bonsai.
-
-```bash
-RISC0_DEV_MODE=false forge test -vvv
-```
-
-### Deterministic Builds
-
-By setting the environment variable `RISC0_USE_DOCKER` a containerized build process via Docker will ensure that all builds of your guest code, regardless of the machine or local environment, will produce the same [image ID][image-id].
-The [image ID][image-id], and its importance to security, is explained in more detail in our [developer FAQ].
-
-```bash
-RISC0_USE_DOCKER=1 cargo build
-```
-
-> ***Note:*** *This requires having Docker installed and in your PATH. To install Docker see [Get Docker].*
-
-## Deploy Your Application
-
-When you're ready, follow the [deployment guide] to get your application running on [Sepolia].
-
-## Project Structure
-
-Below are the primary files in the project directory
-
-```text
-.
-├── Cargo.toml                      // Configuration for Cargo and Rust
-├── foundry.toml                    // Configuration for Foundry
-├── apps
-│   ├── Cargo.toml
-│   └── src
-│       └── lib.rs                  // Utility functions
-│       └── bin                     
-│           └── publisher.rs        // Example app to publish program results into your app contract 
-├── contracts
-│   ├── EvenNumber.sol              // Basic example contract for you to modify
-│   └── ImageID.sol                 // Generated contract with the image ID for your zkVM program
-├── methods
-│   ├── Cargo.toml
-│   ├── guest
-│   │   ├── Cargo.toml
-│   │   └── src
-│   │       └── bin                 // You can add additionally guest prgrams to this folder
-│   │           └── is_even.rs      // Example guest program for cheking if a number is even
-│   └── src
-│       └── lib.rs                  // Compiled image IDs and tests for your guest programs
-└── tests
-    ├── EvenNumber.t.sol            // Tests for the basic example contract
-    └── Elf.sol                     // Generated contract with paths the guest program ELF files.
-```
-
-[Bonsai]: https://dev.bonsai.xyz/
-[Foundry]: https://getfoundry.sh/
-[Get Docker]: https://docs.docker.com/get-docker/
-[Groth16 SNARK proof]: https://www.risczero.com/news/on-chain-verification
-[RISC Zero Verifier]: https://github.com/risc0/risc0/blob/release-0.21/bonsai/ethereum/contracts/IRiscZeroVerifier.sol
-[RISC Zero installation]: https://dev.risczero.com/api/zkvm/install
-[RISC Zero zkVM]: https://dev.risczero.com/zkvm
-[RISC Zero]: https://www.risczero.com/
-[Sepolia]: https://www.alchemy.com/overviews/sepolia-testnet
-[app contract]: ./contracts/
-[cargo-binstall]: https://github.com/cargo-bins/cargo-binstall#cargo-binaryinstall
-[coprocessor]: https://www.risczero.com/news/a-guide-to-zk-coprocessors-for-scalability
-[deployment guide]: /deployment-guide.md
-[developer FAQ]: https://dev.risczero.com/faq#zkvm-application-design
-[image-id]: https://dev.risczero.com/terminology#image-id
-[install Rust]: https://doc.rust-lang.org/cargo/getting-started/installation.html
-[journal]: https://dev.risczero.com/terminology#journal
-[publisher]: ./apps/README.md
-[zkVM program]: ./methods/guest/
+Currently set up with mock data for demonstration purposes:
+- Public key of biometric credential issuer
+- BiometricOnboardingCredential - mock biometric data for the onboarded user
+- BiometricChallengeCredential - mock data created upon request by the service provider.
