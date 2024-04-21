@@ -27,7 +27,7 @@ contract VerifierContract {
     /// @notice RISC Zero verifier contract address.
     IRiscZeroVerifier public immutable verifier;
     /// @notice Image ID of the only zkVM binary to accept verification from.
-    bytes32 public constant imageId = ImageID.PREDICATE_VERIFIER_ID;
+    bytes32 public constant imageId = ImageID.BIOMETRIC_VERIFIER_ID;
 
     /// @notice A number that is guaranteed, by the RISC Zero zkVM, to be even.
     ///         It can be set by calling the `set` function.
@@ -38,9 +38,9 @@ contract VerifierContract {
     }
 
     /// @notice Set the even number stored on the contract. Requires a RISC Zero proof that the number is even.
-    function set(string[] resultList, bytes32 postStateDigest, bytes calldata seal) public {
+    function set(string calldata userDid, bytes32 postStateDigest, bytes calldata seal) public {
         // Construct the expected journal data. Verify will fail if journal does not match.
-        bytes memory journal = abi.encode(resultList);
+        bytes memory journal = abi.encode(userDid);
         require(verifier.verify(seal, imageId, postStateDigest, sha256(journal)));
     }
 

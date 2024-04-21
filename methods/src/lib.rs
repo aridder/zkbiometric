@@ -159,9 +159,9 @@ mod tests {
             .execute(env, super::BIOMETRIC_VERIFIER_ELF)
             .unwrap();
 
-        let result: String = session_info.journal.decode().unwrap();
+        let subject_did: String = session_info.journal.decode().unwrap();
 
-        println!("Result: {}", result);
+        assert_eq!(subject_did, "did:key:z6MkiMYTi9pqYrYbLGN6Drjyj3DsdhVTubJ9uygTNQfjmcpb")
     }
 
     #[test]

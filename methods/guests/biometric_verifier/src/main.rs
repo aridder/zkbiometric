@@ -1,6 +1,5 @@
 #![no_main]
 
-use alloy_primitives::Address;
 use ed25519_dalek::VerifyingKey;
 use jwt_compact::{alg::*, prelude::*, Token, UntrustedToken};
 // If you want to try std support, also update the guests Cargo.toml file
@@ -75,7 +74,6 @@ pub fn main() {
 
     let bytes_pk_eid_issuer: &[u8; 32] = &hex::decode(&onboarding_issuer_public_key).unwrap().try_into().unwrap();
 
-    // Verify the signature, panicking if verification fails.
     let verifying_key_eid_issuer = VerifyingKey::from_bytes(&bytes_pk_eid_issuer).unwrap();
 
     let onboarding_biometric_credential = UntrustedToken::new(&onboarding_biometric_credential_jwt).unwrap();
@@ -84,14 +82,14 @@ pub fn main() {
     let onboarding_claims: Token<CredentialClaims> = Ed25519.validator(&verifying_key_eid_issuer).validate(&onboarding_biometric_credential).unwrap();
     let challenge_claims: Token<CredentialClaims> = Ed25519.validator(&verifying_key_eid_issuer).validate(&challenge_biometric_credential).unwrap();
 
+    let challenge_subject = &challenge_claims.claims().custom.sub;
+    let onboarding_subject = &onboarding_claims.claims().custom.sub;
+
     let claims = &onboarding_claims.claims().custom;
     let challenge_claims = &challenge_claims.claims().custom;
 
     let onboarding_biometric_fingerprint = &claims.vc.credential_subject["fingerprint"];
     let challenge_biometric_fingerprint = &challenge_claims.vc.credential_subject["fingerprint"];
-
-    let onboarding_subject = &claims.vc.credential_subject["id"];
-    let challenge_subject = &challenge_claims.vc.credential_subject["id"];
 
     assert!(onboarding_biometric_fingerprint == challenge_biometric_fingerprint);
     assert!(onboarding_subject == challenge_subject);
