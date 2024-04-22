@@ -4,7 +4,7 @@ Securely verify onboarded biometric data using a real-time challenge with a zkVM
 
 ## Overview
 
-As part of the European Union’s initiative to issue digital credentials to all citizens by 2027, zkBiometric provides a secure and privacy-preserving solution for biometric identity verification. Designed for high assurance and adherence to strict privacy standards, our system enables service providers to verify identities without accessing sensitive biometric data.
+zkBiometric provides a secure and privacy-preserving solution for biometric identity verification and extends the European Union’s initiative to issue digital credentials to all citizens by 2027. It enables service providers to verify identities without accessing sensitive biometric data, adhering to strict privacy standards and regulatory compliance.
 
 ### How It Works
 
@@ -18,7 +18,7 @@ As part of the European Union’s initiative to issue digital credentials to all
 
 ### System Benefits
 
-- **Enhanced Security and Privacy**: Leveraging zero-knowledge proofs to keep biometric data private and secure.
+- **Enhanced Security and Privacy**: Leveraging zero-knowledge proofs biometric data isn't shared with service providers.
   
 - **High Assurance Identity Verification**: Robust biometric mechanisms provide high confidence in identity verification, crucial for sensitive transactions.
   
@@ -29,11 +29,11 @@ As part of the European Union’s initiative to issue digital credentials to all
 
 ## Technology Stack
 
-- **Verifiable Credentials (eIDAS 2.0)**: [EU Digital Identity Wallet](https://github.com/eu-digital-identity-wallet)
+- Verifiable Credentials (eIDAS 2.0): [EU Digital Identity Wallet](https://github.com/eu-digital-identity-wallet)
   
-- **RISC Zero zkVM**: [Learn More](https://www.risczero.com/)
+- [RISC Zero zkVM](https://www.risczero.com/)
   
-- **Foundry Template from RISC Zero zkVM**
+- [Foundry Template from RISC Zero zkVM](https://github.com/risc0/risc0-foundry-template)
 
 ## How It's Made
 
