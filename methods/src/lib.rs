@@ -13,81 +13,20 @@
 // limitations under the License.
 
 //! Generated crate containing the image ID and ELF binary of the build guest.
+include!(concat!(env!("OUT_DIR"), "/methods.rs"));
 
 use serde::{Deserialize, Serialize};
 
-include!(concat!(env!("OUT_DIR"), "/methods.rs"));
-
-#[derive(Serialize, Deserialize, Debug)]
-struct PublicKeyHolder {
-    public_key: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-struct Proof {
-    #[serde(rename = "type")]
-    proof_type: String,
-    jwt: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct Credential {
-    #[serde(rename = "credentialSubject")]
-    credential_subject: serde_json::Value,
-    issuer: serde_json::Value,
-    #[serde(rename = "type")]
-    types: Vec<String>,
-    #[serde(rename = "@context")]
-    context: Vec<String>,
-    #[serde(rename = "issuanceDate")]
-    issuance_date: String,
-    proof: Proof,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct Root {
-    #[serde(rename = "bidSize")]
-    bid_size: u32,
-    #[serde(rename = "eidIssuer")]
-    eid_issuer: PublicKeyHolder,
-    bank: PublicKeyHolder,
-    person: PublicKeyHolder,
-    #[serde(rename = "personCredential")]
-    person_credential: Credential,
-    #[serde(rename = "houseLoanCredential")]
-    house_loan_credential: Credential,
-}
+use credential_verifier::{GenericCredential, PublicKeyHolder};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct BiometricRoot {
     #[serde(rename = "biometricIssuer")]
     biometric_issuer: PublicKeyHolder,
     #[serde(rename = "biometricOnboardingCredential")]
-    biometric_onboarding_credential: Credential,
+    biometric_onboarding_credential: GenericCredential,
     #[serde(rename = "biometricChallengeCredential")]
-    biometric_challenge_credential: Credential,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-enum Condition {
-    LT,
-    GT,
-    EQ,
-    NEQ,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-enum FieldValue {
-    Int(u32),
-    Text(String),
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-struct Predicate {
-    field: String,
-    condition: Condition,
-    value: FieldValue,
-    return_value: String,
+    biometric_challenge_credential: GenericCredential,
 }
 
 #[cfg(test)]
@@ -96,8 +35,7 @@ mod tests {
 
     use risc0_zkvm::{default_executor, ExecutorEnv};
 
-    use crate::{BiometricRoot, FieldValue, Predicate, Root};
-    use crate::Condition::GT;
+    use crate::{BiometricRoot};
 
     #[test]
     fn prove_biometry() {
@@ -122,8 +60,12 @@ mod tests {
             .execute(env, super::BIOMETRIC_VERIFIER_ELF)
             .unwrap();
 
+
         let subject_did: String = session_info.journal.decode().unwrap();
+
+        print!("Subject DID: {}", subject_did);
 
         assert_eq!(subject_did, "did:key:z6MkiMYTi9pqYrYbLGN6Drjyj3DsdhVTubJ9uygTNQfjmcpb")
     }
 }
+

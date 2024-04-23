@@ -75,7 +75,7 @@ pub struct BonsaiProver {}
 impl BonsaiProver {
     /// Generates a snark proof as a triplet (`Vec<u8>`, `FixedBytes<32>`,
     /// `Vec<u8>) for the given elf and input.
-    pub fn prove(elf: &[u8], input: &[u8]) -> Result<(Vec<u8>, FixedBytes<32>, Vec<u8>)> {
+    pub fn prove(elf: &[u8], input: &(&str, &str, &str)) -> Result<(Vec<u8>, FixedBytes<32>, Vec<u8>)> {
         let client = bonsai_sdk::Client::from_env(risc0_zkvm::VERSION)?;
 
         // Compute the image_id, then upload the ELF with the image_id as its key.
@@ -84,6 +84,8 @@ impl BonsaiProver {
         client.upload_img(&image_id_hex, elf.to_vec())?;
         log::info!("Image ID: 0x{}", image_id_hex);
 
+        let serialized_input = serde_json::to_string(&input).expect("Failed to serialize input");
+        let input = serialized_input.into_bytes();
         // Prepare input data and upload it.
         let input_id = client.upload_input(input.to_vec())?;
 

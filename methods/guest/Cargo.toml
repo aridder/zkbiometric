@@ -1,7 +1,11 @@
 [package]
-name = "biometric_verifier"
+name = "guests"
 version = "0.1.0"
 edition = "2021"
+
+[[bin]]
+name = "biometric-verifier"
+path = "./src/bin/biometric_verifier.rs"
 
 [workspace]
 
@@ -13,8 +17,7 @@ hex = "0.4.3"
 k256 = { version = "=0.13.1", features = ["arithmetic", "serde", "expose-field", "std", "ecdsa"], default_features = false }
 jwt-compact = { version = "0.8.0", features = ["ed25519-dalek"] }
 ed25519-dalek = "2.0.0"
-alloy-primitives = { version = "0.6", default-features = false, features = ["rlp", "serde", "std"] }
-alloy-sol-types = { version = "0.6" }
+credential-verifier = { path = "../../credential-verifier" }
 
 [profile.release]
 lto = "thin"
