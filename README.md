@@ -8,7 +8,7 @@ zkBiometric provides a secure and privacy-preserving solution for biometric iden
 
 ### How It Works
 
-- **Biometric Data Capture and Credential Issuance**: Utilizing [Mobai's technology](https://www.mobai.bio/), we capture a digital representation of a user's facial biometrics. These are then encapsulated in a BiometricOnboardingCredential and issued to the user’s digital wallet.
+- **Biometric Data Capture and Credential Issuance**: Utilizing something like [Mobai's technology](https://www.mobai.bio/), we capture a digital representation of a user's facial biometrics. These are then encapsulated in a BiometricOnboardingCredential and issued to the user’s digital wallet.
   
 - **Biometric Verification for Service Access**: Service providers request users to verify their identity by reproducing their biometric "fingerprint," which is used to generate a BiometricChallengeCredential.
   
