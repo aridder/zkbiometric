@@ -100,43 +100,6 @@ mod tests {
     use crate::Condition::GT;
 
     #[test]
-    fn proves_older_than() {
-        let data = fs::read_to_string("./data.json").expect("Unable to read file");
-
-        let root: Root = serde_json::from_str(&data).expect("JSON was not well-formatted");
-
-        let person_credential = root.person_credential;
-
-        let predicate = Predicate {
-            field: String::from("date_of_birth"),
-            condition: GT,
-            value: FieldValue::Int(19791001),
-            return_value: String::from("Subject is older than 40 years old"),
-        };
-
-        let predicate_list = vec![predicate];
-
-        let public_key_eid = root.eid_issuer.public_key;
-
-        let input = (person_credential.proof.jwt, public_key_eid, predicate_list);
-
-        let env = ExecutorEnv::builder()
-            .write(&input)
-            .unwrap()
-            .build()
-            .unwrap();
-
-        // NOTE: Use the executor to run tests without proving.
-        let session_info = default_executor()
-            .execute(env, super::PREDICATE_VERIFIER_ELF)
-            .unwrap();
-        let result_list: Vec<String> = session_info.journal.decode().unwrap();
-
-        // println!("Issuer: {}", issuer_address);
-        println!("Result list: {:?}", result_list);
-    }
-
-    #[test]
     fn prove_biometry() {
         let biometric_mock = fs::read_to_string("./biometric_mock.json").expect("Unable to read file");
         let biometric_mock_root: BiometricRoot = serde_json::from_str(&biometric_mock).expect("JSON was not well-formatted");
@@ -163,46 +126,4 @@ mod tests {
 
         assert_eq!(subject_did, "did:key:z6MkiMYTi9pqYrYbLGN6Drjyj3DsdhVTubJ9uygTNQfjmcpb")
     }
-
-    #[test]
-    fn proves_nationality() {
-        use crate::Condition::EQ;
-
-        let data = fs::read_to_string("./data.json").expect("Unable to read file");
-
-        let root: Root = serde_json::from_str(&data).expect("JSON was not well-formatted");
-
-        let person_credential = root.person_credential;
-
-        let predicate = Predicate {
-            field: String::from("nationality"),
-            condition: EQ,
-            value: FieldValue::Text(String::from("NO")),
-            return_value: String::from("NO"),
-        };
-
-        let predicate_list = vec![predicate];
-
-        let public_key_eid = root.eid_issuer.public_key;
-
-        let input = (person_credential.proof.jwt, public_key_eid, predicate_list);
-
-        let env = ExecutorEnv::builder()
-            .write(&input)
-            .unwrap()
-            .build()
-            .unwrap();
-
-        // NOTE: Use the executor to run tests without proving.
-        let session_info = default_executor()
-            .execute(env, super::PREDICATE_VERIFIER_ELF)
-            .unwrap();
-
-        let issuer: String = session_info.journal.decode().unwrap();
-
-        println!("Issuer: {}", issuer);
-
-        // println!("Issuer address: {}", issuer_address);
-    }
-
 }

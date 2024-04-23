@@ -23,7 +23,7 @@ use clap::Parser;
 use serde::{Deserialize, Serialize};
 
 use apps::{BonsaiProver, TxSender};
-use methods::PREDICATE_VERIFIER_ELF;
+use methods::BIOMETRIC_VERIFIER_ELF;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct PublicKeyHolder {
@@ -135,7 +135,7 @@ fn main() -> Result<()> {
     let input = args.input.abi_encode();
 
     // Send an off-chain proof request to the Bonsai proving service.
-    let (journal, post_state_digest, seal) = BonsaiProver::prove(PREDICATE_VERIFIER_ELF, &input)?;
+    let (journal, post_state_digest, seal) = BonsaiProver::prove(BIOMETRIC_VERIFIER_ELF, &input)?;
 
     let result_list = journal
         .into_iter()
